@@ -24,11 +24,11 @@ options
 
 ```
 let media = new Media(source, {
-	loop: true,
-	volume: 0.6
-	analyser: {
-	  size: 512
-	}
+  loop: true,
+  volume: 0.6
+  analyser: {
+    size: 512
+  }
 })
 ```
 
@@ -48,3 +48,10 @@ let media = new Media(source, {
    - setVolume(val) 设置音频音量，0 ~ 1.0
    - getCurrentTime 获取当前播放的时长
    - setOptions(options) 可以统一设置，如：{ loop: true, volume: 0.5 }
+   
+5. 属性
+
+   - duration 获取音频总时长
+   - state 获取当前音频的状态，running | suspend
+   - volume 获取当前音量
+   - loop 获取音频是否循环
