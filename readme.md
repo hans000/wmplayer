@@ -1,6 +1,10 @@
 # Media
 
-使用AudioContext有两个好处，1、无需额外引入audio标签，2、跟随系统的状态，即手机调成震动/静音模式了，这个声音也就不要出了，3、可以音频解析
+使用AudioContext有下面几个好处
+
+- 无需额外引入audio标签
+- 跟随系统的状态，即手机调成震动/静音模式了，这个声音也就不要出了
+- 可以音频解析，做特效
 
 Media实现对AudioContext的封装，使用如下
 
@@ -40,7 +44,7 @@ let media = new Media(source, {
 
 4. 方法
 
-   - getData  获取分析的音频数据，类型ArrayBuffer，需要开启analyser选项
+   - getData  获取分析的音频数据，类型Uint8Array，需要开启analyser选项
    - play 播放音频
    - suspend 暂停播放
    - start(offset) 设置音频开始播放的时刻，offset的范围为0~duration
@@ -55,3 +59,4 @@ let media = new Media(source, {
    - state 获取当前音频的状态，running | suspend
    - volume 获取当前音量
    - loop 获取音频是否循环
+
