@@ -1,0 +1,29 @@
+{
+  "name": "@hans000/media-player",
+  "version": "0.2.1",
+  "description": "mplayer实现对AudioContext的封装，可以很方便的使用",
+  "main": "media.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/haima16/media.git"
+  },
+  "keywords": [
+    "audiocontext",
+    "audio",
+    "music"
+  ],
+  "author": "hans000",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/haima16/media/issues"
+  },
+  "homepage": "https://github.com/haima16/media#readme",
+  "devDependencies": {
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
+  }
+}

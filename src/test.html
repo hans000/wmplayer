@@ -14,11 +14,13 @@
       <button @click="play">播放</button>
       <button @click="pause">暂停</button>
       <button @click="toggle">切换</button>
+      <button @click="prev">上一首</button>
+      <button @click="next">下一首</button>
     </div>
   </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
-<script src="./media.js"></script>
+<script src="../dist/index.js"></script>
 <script>
   let vm = new Vue({
     el: '#app',
@@ -33,10 +35,6 @@
     methods: {
       play() {
         this.media.play()
-        clearInterval(this.timer)
-        this.timer = setInterval(_=> {
-          this.currentTime = this.media.getCurrentTime()
-        }, 1000)
       },
       pause() {
         this.media.pause()
@@ -47,19 +45,40 @@
       toggle() {
         this.media.toggle()
       },
+      prev() {
+        this.media.playPrev()
+      },
+      next() {
+        this.media.playNext()
+      },
       setVolume() {
         this.media.setVolume(+this.volume)
       }
     },
     mounted() {
-      this.media = new Media('./1.mp3', {
+      this.media = new MPlayer(['./1.mp3', './4.mp3', './3.mp3'], {
         volume: 0.8,
         loop: true,
         analyser: true
       })
+      // this.media.onended = function() {
+      //   console.log('ended');
+      // }
+      this.media.on('ended', _=> {
+        console.log(_, 'ended');
+      })
+      this.media.on('ended', _=> {
+        console.log(_, 'ended 2');
+      })
       this.media.onload = () => {
+        console.log('load');
+        
         this.finished = true
         this.duration = this.media.duration | 0
+        clearInterval(this.timer)
+        this.timer = setInterval(_=> {
+          this.currentTime = this.media.getCurrentTime()
+        }, 1000)
       }
     },
     filters: {
@@ -69,7 +88,6 @@
         return `${min}:${sec}`
       },
     },
-    
   })
 </script>
 </html>
