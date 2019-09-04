@@ -12,7 +12,8 @@
       {{currentTime | clock}}进度：<input type="range" @change="start" v-model="currentTime" min="0" step="1" :max="duration">{{duration | clock}} <br>
       当前音量：{{volume}} <input type="range" min="0" step="0.01" @change="setVolume" v-model="volume" max="1"> <br/>
       <button @click="play">播放</button>
-      <button @click="suspend">暂停</button>
+      <button @click="pause">暂停</button>
+      <button @click="toggle">切换</button>
     </div>
   </div>
 </body>
@@ -37,11 +38,14 @@
           this.currentTime = this.media.getCurrentTime()
         }, 1000)
       },
-      suspend() {
-        this.media.suspend()
+      pause() {
+        this.media.pause()
       },
       start() {
         this.media.start(+this.currentTime)
+      },
+      toggle() {
+        this.media.toggle()
       },
       setVolume() {
         this.media.setVolume(+this.volume)
@@ -65,6 +69,7 @@
         return `${min}:${sec}`
       },
     },
+    
   })
 </script>
 </html>

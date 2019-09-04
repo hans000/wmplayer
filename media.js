@@ -10,7 +10,7 @@
       this.firstPlay = true
       this.delta = 0
       this.ctx = new (window.AudioContext || window.webkitAudioContext)()
-      this.suspend()
+      this.pause()
       this.gain = this.ctx.createGain()
       this.gain.connect(this.ctx.destination)
     },
@@ -82,7 +82,7 @@
       let data = new Uint8Array(this.analyser.frequencyBinCount);
       this.analyser.getByteFrequencyData(data);
       return data
-    },
+    },  
     /**
      * @description 获取当前播放的时刻，单位秒
      */
@@ -102,11 +102,17 @@
     /**
      * @description 暂停
      */
-    suspend() {
+    pause() {
       if (this.ctx.state === 'running') {
         this.ctx.suspend()
         this.state = 'suspend'
       }
+    },
+    /**
+     * @description 切换
+     */
+    toggle() {
+      this.state === 'running' ? this.pause() : this.play()
     },
     /**
      * @param {number} offset 设置播放开始的偏移值
