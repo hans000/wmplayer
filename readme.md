@@ -8,9 +8,9 @@
 
 MPlayer实现对AudioContext的封装，可以很方便的使用
 
-## 使用方法How to use？
+## 使用use
 
-引入media
+引入mplayer
 
 ```
 npm i @hans000/media-player -S
@@ -20,19 +20,26 @@ https://cdn.jsdelivr.net/npm/@hans000/media-player@0.2.1/dist/index.js
 
 ## 示例demo
 
-初始化
+npm安装
 
 ```js
+npm i -S @hans000/media-player
 import MPlayer from '@hans000/media-player'
 ```
 
-```
-<script src="https://cdn.jsdelivr.net/npm/@hans000/media-player@0.2.1/dist/index.js"></script>
-```
+CDN引入
 
 ```
+<script src="https://cdn.jsdelivr.net/npm/@hans000/media-player@0.2.2/dist/mplayer.js"></script>
+
+// 挂载MPlayer构造函数
+```
+
+初始化
+
+```js
 new MPlayer('./1.mp3').onload = function() {
-	this.play()
+	// ...code
 }
 ```
 
@@ -40,18 +47,18 @@ new MPlayer('./1.mp3').onload = function() {
 new MPlayer(resource, options)
 ```
 
-`resouce`：可以传出一个url、一个ArrayBuffer或者值为url的数组
+`resouce`：可以传出一个url string、一个ArrayBuffer或者值为url string的数组
 
-`options`
+`options`：一个对象，配置参数如下
 
 - loop：boolean类型，是否循环播放，默认为`false`
-- volume：0~1，控制音量，默认为`1`
-- auto：加载完成后自动播放，默认`true`
-- index：设置从哪一首开发播放，默认`0`，从即第1首开始
-- analyser：是否开启音频分析，使用默认设置可以设为true；也可以是一个对象，size用于配置fftSize，默认`1024`
+- volume：number类型，0~1，控制音量，默认为`1`
+- auto：boolean类型，加载完成后自动播放，默认`true`
+- index：number类型，设置从哪一首开发播放，默认`0`，从即第1首开始
+- analyser：boolean | object类型，是否开启音频分析，使用默认设置可以设为true；也可以是一个对象，size用于配置fftSize，默认`1024`
 
 ```js
-let media = new Media(resource, {
+let player = new MPlayer(resource, {
   loop: false,
   volume: 0.6,
   auto: false,
@@ -59,7 +66,7 @@ let media = new Media(resource, {
     size: 512
   }
 })
-media.onload = function() {
+player.onload = function() {
 	this.play()
 }
 ```
@@ -68,13 +75,13 @@ media.onload = function() {
 
 ```js
 // 初始化时设置
-let media = new Media('./1.mp3')
+let player = new MPlayer('./1.mp3')
 
 // 添加事件监听方法，会覆盖之前用该方式绑定的监听方法
-media.onload = function () { ... }
+player.onload = function () { ... }
 
 // 添加事件监听方法，会保留该事件的其他监听方法，可同时设置多个事件
-media.on('load', function () { ... })
+player.on('load', function () { ... })
 ```
 
 取消监听
@@ -86,8 +93,6 @@ player.off('load', fn)
 // 解除某事件下所有监听绑定
 player.off('load')
 ```
-
-
 
 ## API
 
