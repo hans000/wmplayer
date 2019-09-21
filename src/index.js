@@ -122,7 +122,7 @@ Media.prototype = {
   bindEnded() {
     this.source.onended = () => {
       this.onended && this.onended()
-      this.emit(ended)
+      this.emit('ended')
     }
   },
   setOptions(options) {

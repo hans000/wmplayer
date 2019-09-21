@@ -1,1 +1,111 @@
-!function(t,e){"object"==typeof exports&&"object"==typeof module?module.exports=e():"function"==typeof define&&define.amd?define([],e):"object"==typeof exports?exports.mplayer=e():t.MPlayer=e()}(window,function(){return function(t){var e={};function i(r){if(e[r])return e[r].exports;var s=e[r]={i:r,l:!1,exports:{}};return t[r].call(s.exports,s,s.exports,i),s.l=!0,s.exports}return i.m=t,i.c=e,i.d=function(t,e,r){i.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:r})},i.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},i.t=function(t,e){if(1&e&&(t=i(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(i.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var s in t)i.d(r,s,function(e){return t[e]}.bind(null,s));return r},i.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return i.d(e,"a",e),e},i.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},i.p="",i(i.s=0)}([function(t,e){function i(t,e={}){this.initParams(e),this.initAnalyser(e.analyser),this.initSource(t)}t.exports=i,i.prototype={initParams(t){let{index:e,auto:i}=t;this.handle={},this.index=e||0,this.auto=i||!0,this.options=t,this.delta=0,this.firstPlay=!0,this.ctx=new(window.AudioContext||window.webkitAudioContext),this.pause(),this.gain=this.ctx.createGain(),this.gain.connect(this.ctx.destination)},on(t,e){this.handle[t]?this.handle[t].push(e):this.handle[t]=[e]},off(t,e){e?this.handle[t]=this.handle[t].filter(t=>t!==e):delete this.handle[t]},emit(t){this.handle[t]&&this.handle[t].forEach(t=>t())},initSource(t){if(this.store=[],"string"==typeof t)this.index=0,this.store.push(t);else{if(!Array.isArray(t))throw new Error("expected resource is string url or Array url");this.store=t}this.initRequest()},initRequest(){let t=this.store[this.index];if("string"==typeof t)this.request(t).then(t=>this.initDecode(t)).catch(t=>{console.log(t),this.playNext()});else{if(!(t instanceof ArrayBuffer))throw new Error("expected resource is string url, ArrayBuffer");this.initDecode(t)}},initDecode(t){this.ctx.decodeAudioData(t).then(t=>{this.initBufferSource(t),this.setOptions(),this.auto&&this.play(),this.bindLoad()})},request(t){return new Promise((e,i)=>{let r=new XMLHttpRequest;r.open("GET",t,!0),r.responseType="arraybuffer",r.onreadystatechange=()=>{let{status:t,readyState:s,statusText:n}=r;4===s&&(t>=200&&t<300||304===t?e(r.response):i(`status: ${t}, ${n}`))},r.onerror=i.bind(this,"error"),r.ontimeout=i.bind(this,"request timerout！"),r.send()})},playPrev(){let t=this.store.length;this.loop&&!~--this.index&&(this.index+=t),this.reset()},playNext(){let t=this.store.length;this.loop&&(this.index=++this.index%t),this.reset()},reset(){this.pause(),this.firstPlay=!0,this.source.onended=null,this.source.stop(),this.initRequest()},initBufferSource(t){this.source=this.ctx.createBufferSource(),this.decodedData=t,this.source.buffer=this.decodedData,this.duration=this.source.buffer.duration,this.source.connect(this.analyser?this.analyser:this.gain),this.bindEnded()},bindLoad(){this.onload&&this.onload(),this.emit("load")},bindEnded(){this.source.onended=()=>{this.onended&&this.onended(),this.emit(ended)}},setOptions(t){let{loop:e,volume:i}=t||this.options;null!=e&&this.setLoop(e),null!=i&&this.setVolume(i)},initAnalyser(t){if(t){if("boolean"!=typeof t&&("object"!=typeof t||null===t))throw new Error("expected parameter is boolean or object");{this.analyser=this.ctx.createAnalyser();let e=t.size||1024;this.analyser.fftSize=e,this.analyser.connect(this.gain)}}},getData(){if(!this.analyser)return;let t=new Uint8Array(this.analyser.frequencyBinCount);return this.analyser.getByteFrequencyData(t),t},getCurrentTime(){return Math.min(this.ctx.currentTime-this.delta,this.duration)},play(){this.firstPlay&&this.start(0),"suspended"===this.ctx.state&&this.ctx.resume(),this.state="running"},pause(){"running"===this.ctx.state&&(this.ctx.suspend(),this.state="suspend")},toggle(){"running"===this.state?this.pause():this.play()},start(t){if("number"!=typeof t)throw new Error("expected parameter is number type");if(this.duration>=t&&t>=0)return this.delta=this.ctx.currentTime-t,this.firstPlay||(this.source.onended=null,this.source.stop(),this.initBufferSource(this.decodedData)),this.source.start(this.ctx.currentTime,t),this.state="running",void(this.firstPlay=!1);throw new Error(`value is out of range and expected range from 0 to ${this.duration}`)},setLoop(t){if("boolean"!=typeof t)throw new Error("expected parameter is boolean type");this.source.loop=t,this.loop=t},setVolume(t=1){if("number"!=typeof t)throw new Error("expected parameter is number type");if(t>=0&&t<=1)return this.gain.gain.value=t,void(this.volume=t);throw new Error("value is out of range and expected range from 0 to 1")}}}])});
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["mplayer"] = factory();
+	else
+		root["MPlayer"] = factory();
+})(window, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/index.js");
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./src/index.js":
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = Media\r\n\r\nfunction Media(resource, options={}) {\r\n  this.initParams(options)\r\n  this.initAnalyser(options.analyser)\r\n  this.initSource(resource)\r\n}\r\nMedia.prototype = {\r\n  initParams(options) {\r\n    let { index, auto } = options\r\n    this.handle = {}\r\n    this.index = index || 0\r\n    this.auto = auto || true\r\n    this.options = options\r\n    this.delta = 0\r\n    this.firstPlay = true\r\n    this.ctx = new (window.AudioContext || window.webkitAudioContext)()\r\n    this.pause()\r\n    this.gain = this.ctx.createGain()\r\n    this.gain.connect(this.ctx.destination)\r\n  },\r\n  on(type, fn) {\r\n    this.handle[type] ? this.handle[type].push(fn) : this.handle[type] = [fn]\r\n  },\r\n  off(type, fn) {\r\n    if (fn) {\r\n      this.handle[type] = this.handle[type].filter(e => e !== fn)\r\n    } else {\r\n      delete this.handle[type]\r\n    }\r\n  },\r\n  emit(type) {\r\n    this.handle[type] && this.handle[type].forEach(e => e())\r\n  },\r\n  initSource(resource) {\r\n    this.store = []\r\n    if (typeof resource === 'string') {\r\n      this.index = 0\r\n      this.store.push(resource)\r\n    } else if (Array.isArray(resource)) {\r\n      this.store = resource\r\n    } else {\r\n      throw new Error('expected resource is string url or Array url')\r\n    }\r\n    this.initRequest()\r\n  },\r\n  initRequest() {\r\n    let resource = this.store[this.index]\r\n    if (typeof resource === 'string') {\r\n      this.request(resource)\r\n        .then(data => this.initDecode(data))\r\n        .catch(err => {\r\n          console.log(err)\r\n          this.playNext()\r\n        })\r\n    } else if (resource instanceof ArrayBuffer) {\r\n      this.initDecode(resource)\r\n    } else {\r\n      throw new Error('expected resource is string url, ArrayBuffer')\r\n    }\r\n  },\r\n  initDecode(data) {\r\n    this.ctx.decodeAudioData(data).then(decodedData => {\r\n      this.initBufferSource(decodedData)\r\n      this.setOptions()\r\n      this.auto && this.play()\r\n      this.bindLoad()\r\n    })\r\n  },\r\n  /**\r\n   * @param {string} url 音频url地址\r\n   */\r\n  request(url) {\r\n    return new Promise((resolve, reject) => {\r\n      let xhr = new XMLHttpRequest()\r\n      xhr.open('GET', url, true)\r\n      xhr.responseType = 'arraybuffer'\r\n      xhr.onreadystatechange = () => {\r\n        let { status, readyState, statusText } = xhr\r\n        if (readyState === 4) {\r\n          if (status >= 200 && status < 300 || status === 304) {\r\n            resolve(xhr.response)\r\n          } else {\r\n            reject(`status: ${status}, ${statusText}`)\r\n          }\r\n        }\r\n      }\r\n      xhr.onerror = reject.bind(this, 'error')\r\n      xhr.ontimeout = reject.bind(this, 'request timerout！')\r\n      xhr.send()\r\n    })\r\n  },\r\n  playPrev() {\r\n    let len = this.store.length\r\n    this.loop && !~--this.index && (this.index += len)\r\n    this.reset()\r\n  },\r\n  playNext() {\r\n    let len = this.store.length\r\n    this.loop && (this.index = ++this.index % len)\r\n    this.reset()\r\n  },\r\n  reset() {\r\n    this.pause()\r\n    this.firstPlay = true\r\n    this.source.onended = null\r\n    this.source.stop()\r\n    this.initRequest()\r\n  },\r\n  initBufferSource(decodedData) {\r\n    this.source = this.ctx.createBufferSource()\r\n    this.decodedData = decodedData\r\n    this.source.buffer = this.decodedData\r\n    this.duration = this.source.buffer.duration\r\n    this.source.connect(this.analyser ? this.analyser : this.gain)\r\n    this.bindEnded()\r\n  },\r\n  bindLoad() {\r\n    this.onload && this.onload()\r\n    this.emit('load')\r\n  },\r\n  bindEnded() {\r\n    this.source.onended = () => {\r\n      this.onended && this.onended()\r\n      this.emit('ended')\r\n    }\r\n  },\r\n  setOptions(options) {\r\n    let { loop, volume } = options ? options : this.options\r\n    if (loop != null) this.setLoop(loop)\r\n    if (volume != null) this.setVolume(volume)\r\n  },\r\n  /**\r\n   * @param {object} options 分析器配置信息\r\n   */\r\n  initAnalyser(options) {\r\n    if (!options) return\r\n    if (typeof options === 'boolean' ||\r\n        typeof options === 'object' && options !== null) {\r\n      this.analyser = this.ctx.createAnalyser()\r\n      let size = options.size || 1024\r\n      this.analyser.fftSize = size\r\n      this.analyser.connect(this.gain)\r\n    } else {\r\n      throw new Error('expected parameter is boolean or object')\r\n    }\r\n  },\r\n  /**\r\n   * @description 获取解析的音频数据\r\n   */\r\n  getData() {\r\n    if (!this.analyser) return\r\n    let data = new Uint8Array(this.analyser.frequencyBinCount);\r\n    this.analyser.getByteFrequencyData(data);\r\n    return data\r\n  },\r\n  /**\r\n   * @description 获取当前播放的时刻，单位秒\r\n   */\r\n  getCurrentTime() {\r\n    return Math.min(this.ctx.currentTime - this.delta, this.duration)\r\n  },\r\n  /**\r\n   * @description 播放\r\n   */\r\n  play() {\r\n    if (this.firstPlay) this.start(0)\r\n    if (this.ctx.state === 'suspended') this.ctx.resume()\r\n    this.state = 'running'\r\n  },\r\n  /**\r\n   * @description 暂停\r\n   */\r\n  pause() {\r\n    if (this.ctx.state === 'running') {\r\n      this.ctx.suspend()\r\n      this.state = 'suspend'\r\n    }\r\n  },\r\n  /**\r\n   * @description 切换\r\n   */\r\n  toggle() {\r\n    this.state === 'running' ? this.pause() : this.play()\r\n  },\r\n  /**\r\n   * @param {number} offset 设置播放开始的偏移值\r\n   */\r\n  start(offset) {\r\n    if (typeof offset !== 'number') throw new Error('expected parameter is number type')\r\n    if (this.duration >= offset && offset >= 0) {\r\n      this.delta = this.ctx.currentTime - offset\r\n      if (!this.firstPlay) {\r\n        this.source.onended = null\r\n        this.source.stop()\r\n        this.initBufferSource(this.decodedData)\r\n      }\r\n      this.source.start(this.ctx.currentTime, offset)\r\n      this.state = 'running'\r\n      this.firstPlay = false\r\n      return\r\n    }\r\n    throw new Error(`value is out of range and expected range from 0 to ${this.duration}`)\r\n  },\r\n  /**\r\n   * @param {boolean} loop 设置歌曲是否循环\r\n   */\r\n  setLoop(loop) {\r\n    if (typeof loop !== 'boolean') throw new Error('expected parameter is boolean type')\r\n    this.source.loop = loop\r\n    this.loop = loop\r\n  },\r\n  /**\r\n   * @param {number} val 设置音量\r\n   */\r\n  setVolume(val=1) {\r\n    if (typeof val !== 'number') throw new Error('expected parameter is number type')\r\n    if (val >= 0 && val <= 1) {\r\n      this.gain.gain.value = val //** 2\r\n      this.volume = val\r\n      return\r\n    }\r\n    throw new Error('value is out of range and expected range from 0 to 1')\r\n  },\r\n}\n\n//# sourceURL=webpack://MPlayer/./src/index.js?");
+
+/***/ })
+
+/******/ });
+});
