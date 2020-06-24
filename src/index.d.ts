@@ -10,12 +10,12 @@ interface IOptions {
 }
 declare type EventType = 'load' | 'ended';
 declare type EventHandle = () => void;
-export default class MediaPlayer {
+export default class MPlayer {
     private options;
-    private state;
+    private playingState;
     private decodedData;
     private analyser;
-    private store;
+    private urlList;
     private duration;
     private handle;
     private delta;
@@ -31,15 +31,17 @@ export default class MediaPlayer {
     private initSource;
     private initRequest;
     private request;
+    private pushCache;
     private initDecode;
     on(type: EventType, fn: () => void): void;
     off(type: EventType, fn: () => void): void;
     private emit;
     playPrev(): void;
     playNext(): void;
+    setUrlList(list: string[]): void;
     private bindLoad;
     private bindEnded;
-    private setOptions;
+    setOptions(options: IOptions): void;
     private initAnalyser;
     reset(): void;
     start(offset: number): void;
