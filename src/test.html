@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <div v-if="finished">
+      {{currentTime | clock}}进度：<input type="range" @change="start" v-model="currentTime" min="0" step="1" :max="duration">{{duration | clock}} <br>
+      当前音量：{{volume}} <input type="range" min="0" step="0.01" @change="setVolume" v-model="volume" max="1"> <br/>
+      <button @click="play">播放</button>
+      <button @click="pause">暂停</button>
+      <button @click="toggle">切换</button>
+      <button @click="prev">上一首</button>
+      <button @click="next">下一首</button>
+    </div>
+  </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+<script src="../dist/mplayer.js"></script>
+<script>
+  let vm = new Vue({
+    el: '#app',
+    data: {
+      duration: 0,
+      media: '',
+      volume: 1,
+      finished: false,
+      currentTime: 0,
+      timer: null,
+    },
+    methods: {
+      play() {
+        this.media.play()
+      },
+      pause() {
+        this.media.pause()
+      },
+      start() {
+        this.media.start(+this.currentTime)
+      },
+      toggle() {
+        this.media.toggle()
+      },
+      prev() {
+        this.media.playPrev()
+      },
+      next() {
+        this.media.playNext()
+      },
+      setVolume() {
+        this.media.setVolume(+this.volume)
+      }
+    },
+    mounted() {
+      this.media = new MPlayer(['./1.mp3', './4.mp3', './3.mp3'], {
+        volume: 0.8,
+        loop: true,
+        analyser: true
+      })
+      // this.media.onended = function() {
+      //   console.log('ended');
+      // }
+      this.media.on('ended', _=> {
+        console.log(_, 'ended');
+      })
+      this.media.on('ended', _=> {
+        console.log(_, 'ended 2');
+      })
+      this.media.onload = () => {
+        console.log('load');
+        
+        this.finished = true
+        this.duration = this.media.duration | 0
+        clearInterval(this.timer)
+        this.timer = setInterval(_=> {
+          this.currentTime = this.media.getCurrentTime()
+        }, 1000)
+      }
+    },
+    filters: {
+      clock(val) {
+        let min = `00${val/60|0}`.slice(-2)
+        let sec = `00${val%60|0}`.slice(-2)
+        return `${min}:${sec}`
+      },
+    },
+  })
+</script>
+</html>
