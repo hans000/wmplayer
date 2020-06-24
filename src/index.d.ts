@@ -1,0 +1,55 @@
+interface IOptions {
+    index?: number;
+    auto?: boolean;
+    fftSize?: number;
+    volume?: number;
+    loop?: boolean;
+    cacheCount?: number;
+    baseUrl?: string;
+    request?: (options: IOptions) => ArrayBuffer;
+}
+declare type EventType = 'load' | 'ended';
+declare type EventHandle = () => void;
+export default class MediaPlayer {
+    private options;
+    private state;
+    private decodedData;
+    private analyser;
+    private store;
+    private duration;
+    private handle;
+    private delta;
+    private firstPlay;
+    private ctx;
+    private gain;
+    private source;
+    private cache;
+    onload: EventHandle;
+    onended: EventHandle;
+    constructor(resource: string | string[], options: IOptions);
+    private initParams;
+    private initSource;
+    private initRequest;
+    private request;
+    private initDecode;
+    on(type: EventType, fn: () => void): void;
+    off(type: EventType, fn: () => void): void;
+    private emit;
+    playPrev(): void;
+    playNext(): void;
+    private bindLoad;
+    private bindEnded;
+    private setOptions;
+    private initAnalyser;
+    reset(): void;
+    start(offset: number): void;
+    private initBufferSource;
+    getData(): Uint8Array;
+    getCurrentTime(): number;
+    play(): void;
+    pause(): void;
+    toggle(): void;
+    setLoop(loopState: boolean): void;
+    setVolume(val?: number): void;
+}
+export {};
