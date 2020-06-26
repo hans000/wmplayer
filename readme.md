@@ -54,7 +54,6 @@ new MPlayer(resource, options)
 
 - loop：boolean类型，是否循环播放，默认为`false`
 - volume：number类型，0~1，控制音量，默认为`1`
-- auto：boolean类型，加载完成后自动播放，默认`true`
 - index：number类型，设置从哪一首开发播放，默认`0`，从即第1首开始
 - fftSize：number类型，音频分析，默认`1024`
 - cacheCount：number类型，缓存数量，默认5
@@ -64,9 +63,9 @@ new MPlayer(resource, options)
 let player = new MPlayer(resource, {
   loop: false,
   volume: 0.6,
-  auto: false,
   fftSize: 512,
-  cacheCount: 10
+  cacheCount: 10,
+  playMode: 'rand',
 })
 player.onload = function() {
 	this.play()
@@ -103,8 +102,7 @@ player.off('load')
 - duration 获取音频总时长`number`
 - state 获取当前音频的状态，running | suspend
 - volume 获取当前音量`number`
-- loop 获取音频是否循环`boolean`
-- auto 是否自动播放`boolean`
+- playMode 获取音频播放模式`PlayMode`
 
 方法 methods
 
@@ -118,7 +116,7 @@ player.off('load')
 - playPrev 播放上一首
 - playNext 播放下一首
 - start(offset) 设置音频开始播放的时刻，offset的范围为0~duration
-- setLoop(bool) 设置音频是否循环播放
+- setPlayMode(PlayMode) 设置音频是否循环播放, 'rand' | 'single' | 'loop'
 - setVolume(val) 设置音频音量，0 ~ 1.0
 - getCurrentTime 获取当前播放的时长
 - setOptions(options) 可以统一设置，如：{ loop: true, volume: 0.5 }

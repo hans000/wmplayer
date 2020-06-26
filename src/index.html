@@ -13,11 +13,10 @@
     <button id="btn4">turn</button>
 </body>
 <script>
-    const media = new MPlayer(['./1.mp3', './2.mp3'], {
+    const media = new MPlayer(['./1.mp3', './2.mp3', './3.mp3'], {
         volume: 0.8,
-        loop: true,
         baseUrl: 'mock',
-        auto: false,
+        playMode: 'rand',
     })
     btn2.onclick = () => {
         media.playNext()
@@ -30,9 +29,6 @@
         btn.onclick = () => {
             media.play()
         }
-        setInterval(() => {
-            console.log(media.getData());
-        }, 1000)
     }
     btn4.onclick = () => {
         media.setUrlList(['./3.mp3'])

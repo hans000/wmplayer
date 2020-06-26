@@ -1,14 +1,13 @@
 interface IOptions {
     index?: number;
-    auto?: boolean;
     fftSize?: number;
     volume?: number;
-    loop?: boolean;
     cacheCount?: number;
     baseUrl?: string;
-    request?: (options: IOptions) => ArrayBuffer
+    request?: (options: IOptions) => ArrayBuffer;
+    playMode?: PlayMode
 }
-
+type PlayMode = 'loop' | 'rand' | 'single'
 type EventType = 'load' | 'ended';
 type PlayingState = 'suspended' | 'running';
 type EventHandle = () => void;
@@ -18,16 +17,19 @@ interface ICacheItem {
 }
 
 const defaultOptions: IOptions = {
-    auto: true,
     index: 0,
     fftSize: 256,
-    loop: true,
+    playMode: 'loop',
     volume: 1,
     baseUrl: '',
 }
 
 function pathResolve(baseUrl: string, subUrl: string) {
     return baseUrl + subUrl.replace(/^[\.|\/]\/?/, '/')
+}
+
+function getRandNum(max: number) {
+    return Math.random() * max | 0
 }
 
 export default class MPlayer {
@@ -38,15 +40,13 @@ export default class MPlayer {
     private analyser: AnalyserNode;
     private urlList: string[] = [];
     private duration: number;
-
     private handle: { [name: string]: EventHandle[] };
     private delta = 0;
     private firstPlay = true;
     private ctx: AudioContext;
     private gain: GainNode;
-    private source: any;
+    private source: AudioBufferSourceNode;
     private cache: ICacheItem[] = [];
-
     public onload: EventHandle;
     public onended: EventHandle;
     //#endregion
@@ -75,6 +75,9 @@ export default class MPlayer {
             this.urlList.push(resource)
         } else if (Array.isArray(resource)) {
             this.urlList = resource
+            if (this.options.playMode === 'rand') {
+                this.options.index = getRandNum(resource.length)
+            }
         } else {
             throw new Error('expected resource is string url or Array url')
         }
@@ -130,39 +133,11 @@ export default class MPlayer {
                 this.pushCache({ url, data: decodedData })
             }
             this.initBufferSource(decodedData)
-            this.options.auto && this.play()
+            this.play()
             this.bindLoad()
         }).catch(err => {
             console.error(err);
         })
-    }
-    public on(type: EventType, fn: () => void) {
-        this.handle[type] ? this.handle[type].push(fn) : this.handle[type] = [fn]
-    }
-    public off(type: EventType, fn: () => void) {
-        fn ? this.handle[type] = this.handle[type].filter(e => e !== fn) : delete this.handle[type]
-    }
-    private emit(type: EventType) {
-        this.handle[type] && this.handle[type].forEach(e => e())
-    }
-    public playPrev() {
-        const len = this.urlList.length
-        this.options.loop && !~--this.options.index && (this.options.index += len)
-        this.reset()
-    }
-    public playNext() {
-        const len = this.urlList.length
-        this.options.loop && (this.options.index = ++this.options.index % len)
-        this.reset()
-    }
-    public setUrlList(list: string[]) {
-        if (!Array.isArray(list)) {
-            console.warn('list expected string[]');
-            return
-        }
-        this.urlList = list;
-        this.options.index = 0;
-        this.reset()
     }
     private bindLoad() {
         this.onload && this.onload()
@@ -172,15 +147,11 @@ export default class MPlayer {
         this.source.onended = () => {
             this.onended && this.onended()
             this.emit('ended')
-        }
-    }
-    public setOptions(options: IOptions) {
-        let { loop, volume } = options ? options : this.options
-        if (loop != null) {
-            this.setLoop(loop)
-        }
-        if (volume != null) {
-            this.setVolume(volume)
+            if (this.options.playMode === 'single') {
+                this.start(0)
+            } else {
+                this.playNext()
+            }
         }
     }
     private initAnalyser() {
@@ -194,19 +165,78 @@ export default class MPlayer {
             console.warn('fftSize expected number');
         }
     }
+    private initBufferSource(decodedData: AudioBuffer) {
+        this.source = this.ctx.createBufferSource()
+        this.decodedData = decodedData
+        this.source.buffer = this.decodedData
+        this.duration = this.source.buffer.duration
+        this.source.connect(this.analyser ? this.analyser : this.gain)
+        this.bindEnded()
+    }
+    public on(type: EventType, fn: () => void) {
+        this.handle[type] ? this.handle[type].push(fn) : this.handle[type] = [fn]
+    }
+    public off(type: EventType, fn: () => void) {
+        fn ? this.handle[type] = this.handle[type].filter(e => e !== fn) : delete this.handle[type]
+    }
+    private emit(type: EventType) {
+        this.handle[type] && this.handle[type].forEach(e => e())
+    }
+    public playPrev() {
+        const len = this.urlList.length
+        this.options.playMode === 'rand'
+            ? this.options.index = getRandNum(len)
+            : !~--this.options.index && (this.options.index += len)
+        this.reset()
+    }
+    public playNext() {
+        const len = this.urlList.length
+        this.options.index = this.options.playMode === 'rand'
+            ? getRandNum(len)
+            : ++this.options.index % len
+        this.reset()
+    }
+    public setUrlList(list: string[]) {
+        if (!Array.isArray(list)) {
+            console.warn('list expected string[]');
+            return
+        }
+        this.urlList = list;
+        this.options.index = 0;
+        this.reset()
+    }
+    public setOptions(options: IOptions) {
+        let { playMode, volume } = options ? options : this.options
+        if (playMode != null) {
+            this.setPlayMode(playMode)
+        }
+        if (volume != null) {
+            this.setVolume(volume)
+        }
+    }
+    public play() {
+        if (this.firstPlay) {
+            this.start(0)
+        }
+        if (this.ctx.state === 'suspended') {
+            this.ctx.resume()
+        }
+        this.playingState = 'running'  
+    }
     public reset() {
         if (this.source) {
             this.pause()
-            this.firstPlay = true
+            if (!this.firstPlay) {
+                this.source.stop()
+            }
             this.source.onended = null
-            this.source.stop()
+            this.firstPlay = true
         }
         const url = this.urlList[this.options.index]
         const item = this.cache.find(v => v.url === url)
         if (item) {
             this.initBufferSource(item.data)
-            this.options.auto && this.play()
-            // this.bindLoad()
+            this.play()
         } else {
             this.initRequest()
         }
@@ -234,14 +264,6 @@ export default class MPlayer {
         this.playingState = 'running'
         this.firstPlay = false
     }
-    private initBufferSource(decodedData: AudioBuffer) {
-        this.source = this.ctx.createBufferSource()
-        this.decodedData = decodedData
-        this.source.buffer = this.decodedData
-        this.duration = this.source.buffer.duration
-        this.source.connect(this.analyser ? this.analyser : this.gain)
-        this.bindEnded()
-    }
     public getData(): Uint8Array {
         if (!this.analyser) {
             return null
@@ -253,15 +275,6 @@ export default class MPlayer {
     public getCurrentTime() {
         return Math.min(this.ctx.currentTime - this.delta, this.duration)
     }
-    public play() {
-        if (this.firstPlay) {
-            this.start(0)
-        }
-        if (this.ctx.state === 'suspended') {
-            this.ctx.resume()
-        }
-        this.playingState = 'running'  
-    }
     public pause() {
         if (this.ctx.state === 'running') {
             this.ctx.suspend()
@@ -271,12 +284,11 @@ export default class MPlayer {
     public toggle() {
         this.playingState === 'running' ? this.pause() : this.play()
     }
-    public setLoop(loopState: boolean) {
-        if (typeof loopState !== 'boolean') {
-            console.warn(`loopState expected boolean`)
+    public setPlayMode(playMode: PlayMode) {
+        if (typeof playMode !== 'boolean') {
+            console.warn(`playMode expected boolean`)
         }
-        this.source.loop = !!loopState
-        this.options.loop = loopState
+        this.options.playMode = playMode
     } 
     public setVolume(val = 1) {
         if (typeof val !== 'number') {

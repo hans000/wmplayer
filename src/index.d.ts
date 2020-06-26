@@ -1,13 +1,13 @@
 interface IOptions {
     index?: number;
-    auto?: boolean;
     fftSize?: number;
     volume?: number;
-    loop?: boolean;
     cacheCount?: number;
     baseUrl?: string;
     request?: (options: IOptions) => ArrayBuffer;
+    playMode?: PlayMode;
 }
+declare type PlayMode = 'loop' | 'rand' | 'single';
 declare type EventType = 'load' | 'ended';
 declare type EventHandle = () => void;
 export default class MPlayer {
@@ -33,25 +33,25 @@ export default class MPlayer {
     private request;
     private pushCache;
     private initDecode;
+    private bindLoad;
+    private bindEnded;
+    private initAnalyser;
+    private initBufferSource;
     on(type: EventType, fn: () => void): void;
     off(type: EventType, fn: () => void): void;
     private emit;
     playPrev(): void;
     playNext(): void;
     setUrlList(list: string[]): void;
-    private bindLoad;
-    private bindEnded;
     setOptions(options: IOptions): void;
-    private initAnalyser;
+    play(): void;
     reset(): void;
     start(offset: number): void;
-    private initBufferSource;
     getData(): Uint8Array;
     getCurrentTime(): number;
-    play(): void;
     pause(): void;
     toggle(): void;
-    setLoop(loopState: boolean): void;
+    setPlayMode(playMode: PlayMode): void;
     setVolume(val?: number): void;
 }
 export {};
