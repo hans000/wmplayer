@@ -30,6 +30,9 @@
         btn.onclick = () => {
             media.play()
         }
+        setInterval(() => {
+            console.log(media.getData());
+        }, 1000)
     }
     btn4.onclick = () => {
         media.setUrlList(['./3.mp3'])

@@ -1,6 +1,6 @@
 {
   "name": "@hans000/media-player",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "mplayer实现对AudioContext的封装，可以很方便的使用",
   "main": "dist/mplayer.js",
   "types": "./src/index.d.ts",

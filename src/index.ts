@@ -51,7 +51,7 @@ export default class MPlayer {
     public onended: EventHandle;
     //#endregion
 
-    constructor(resource: string | string[], options: IOptions) {
+    constructor(resource: string | string[], options: IOptions = {}) {
         this.options = { ...defaultOptions, ...options }
         this.initParams()
         this.initSource(resource)
