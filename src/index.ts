@@ -199,7 +199,7 @@ export default class MPlayer {
             this.pause()
             this.firstPlay = true
             this.source.onended = null
-            this.playingState === 'running' && this.source.stop()
+            this.source.stop()
         }
         const url = this.urlList[this.options.index]
         const item = this.cache.find(v => v.url === url)
