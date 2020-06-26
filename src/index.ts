@@ -20,7 +20,7 @@ interface ICacheItem {
 const defaultOptions: IOptions = {
     auto: true,
     index: 0,
-    fftSize: 1024,
+    fftSize: 256,
     loop: true,
     volume: 1,
     baseUrl: '',
