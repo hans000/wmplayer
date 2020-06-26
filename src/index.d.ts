@@ -26,7 +26,7 @@ export default class MPlayer {
     private cache;
     onload: EventHandle;
     onended: EventHandle;
-    constructor(resource: string | string[], options: IOptions);
+    constructor(resource: string | string[], options?: IOptions);
     private initParams;
     private initSource;
     private initRequest;

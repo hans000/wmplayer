@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Document</title></head><body>43 <button id="btn">play</button> <button id="btn3">prev</button> <button id="btn2">next</button> <button id="btn4">turn</button><script src="./dist/mplayer.js"></script></body><script>const media = new MPlayer(['./1.mp3', './2.mp3'], {
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Document</title></head><body>43 <button id="btn">play</button> <button id="btn3">prev</button> <button id="btn2">next</button> <button id="btn4">turn</button><script src="mplayer.js"></script></body><script>const media = new MPlayer(['./1.mp3', './2.mp3'], {
         volume: 0.8,
         loop: true,
         baseUrl: 'mock',
@@ -15,6 +15,9 @@
         btn.onclick = () => {
             media.play()
         }
+        setInterval(() => {
+            console.log(media.getData());
+        }, 1000)
     }
     btn4.onclick = () => {
         media.setUrlList(['./3.mp3'])
