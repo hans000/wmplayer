@@ -8,7 +8,7 @@ interface IOptions {
     playMode?: PlayMode;
 }
 declare type PlayMode = 'loop' | 'rand' | 'single';
-declare type EventType = 'load' | 'ended';
+declare type EventType = 'load' | 'ended' | 'catch';
 declare type EventHandle = () => void;
 export default class MPlayer {
     private options;
@@ -26,6 +26,8 @@ export default class MPlayer {
     private cache;
     onload: EventHandle;
     onended: EventHandle;
+    oncatch: () => void;
+    private errorUrl;
     constructor(resource: string | string[], options?: IOptions);
     private initParams;
     private initSource;

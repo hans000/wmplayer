@@ -1,6 +1,6 @@
 {
   "name": "@hans000/media-player",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "mplayer实现对AudioContext的封装，可以快速的开发音乐播放器，可以对音频分析，做音频可视化",
   "main": "dist/mplayer.js",
   "types": "./src/index.d.ts",

@@ -15,7 +15,7 @@ MPlayer实现对AudioContext的封装，可以很方便的使用
 ```
 npm i @hans000/media-player -S
 
-https://cdn.jsdelivr.net/npm/@hans000/media-player@1.0.0/dist/index.js
+https://cdn.jsdelivr.net/npm/@hans000/media-player@1.3.0/dist/index.js
 ```
 
 ## 示例demo
@@ -30,7 +30,7 @@ import MPlayer from '@hans000/media-player'
 CDN引入
 
 ```
-<script src="https://cdn.jsdelivr.net/npm/@hans000/media-player@1.0.0/dist/mplayer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@hans000/media-player@1.3.0/dist/mplayer.js"></script>
 
 // 挂载MPlayer构造函数
 ```
@@ -127,6 +127,7 @@ player.off('load')
 
 - onended：音频播放完触发
 
+- oncatch：捕捉异常
 ## License
 
 MIT

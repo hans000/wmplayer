@@ -8,7 +8,7 @@ interface IOptions {
     playMode?: PlayMode
 }
 type PlayMode = 'loop' | 'rand' | 'single'
-type EventType = 'load' | 'ended';
+type EventType = 'load' | 'ended' | 'catch';
 type PlayingState = 'suspended' | 'running';
 type EventHandle = () => void;
 interface ICacheItem {
@@ -49,6 +49,8 @@ export default class MPlayer {
     private cache: ICacheItem[] = [];
     public onload: EventHandle;
     public onended: EventHandle;
+    public oncatch: () => void;
+    private errorUrl = '';
     //#endregion
 
     constructor(resource: string | string[], options: IOptions = {}) {
@@ -96,7 +98,16 @@ export default class MPlayer {
             this.initDecode(data, resource)
         }).catch(err => {
             console.error(err);
-            this.playNext()
+            this.oncatch && this.oncatch()
+            this.emit('catch')
+            if (this.errorUrl) {
+                if (this.errorUrl !== resource) {
+                    this.playNext()
+                }
+            } else {
+                this.errorUrl = resource
+                this.playNext()
+            }            
         })
     }
     private request(url: string) {
@@ -137,6 +148,8 @@ export default class MPlayer {
             this.bindLoad()
         }).catch(err => {
             console.error(err);
+            this.oncatch && this.oncatch()
+            this.emit('catch')
         })
     }
     private bindLoad() {
