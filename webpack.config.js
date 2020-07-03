@@ -13,8 +13,8 @@ module.exports = {
             commonjs: 'mplayer'
         },
         libraryTarget: 'umd',
-        libraryExport: 'default',
-        globalObject: 'this',
+        // libraryExport: 'default',
+        // globalObject: 'this',
         publicPath: "",
     },
     devtool: 'eval‐source‐map',
