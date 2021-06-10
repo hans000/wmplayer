@@ -1,41 +1,23 @@
 const path = require("path")
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-    mode: 'development', // development production
+    mode: 'production',
     entry: './src/index.ts',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'mplayer.js',
+        filename: 'wmplayer.js',
         library: {
-            root: 'MPlayer',
-            amd: 'mplayer',
-            commonjs: 'mplayer'
+            type: 'umd',
+            name: 'wmplayer',
         },
-        libraryTarget: 'umd',
-        // libraryExport: 'default',
-        // globalObject: 'this',
-        publicPath: "",
+        globalObject: 'this',
     },
-    devtool: 'eval‐source‐map',
     resolve: {
-        extensions: ['.ts', '.js']
+        extensions: ['.ts']
     },
     module: {
         rules: [
             { test: /\.ts$/, use: 'ts-loader' },
         ]
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: './src/index.html'
-        }),
-    ],
-    devServer: {
-        contentBase: path.join(__dirname, "dist"),
-        compress: true,
-        port: 8080,
-        publicPath: '/',
-    }
 }

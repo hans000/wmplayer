@@ -1,4 +1,4 @@
-# MPlayer
+# wmplayer
 
 使用AudioContext有下面几个好处
 
@@ -6,16 +6,15 @@
 - 跟随系统的状态，即手机调成震动/静音模式了，这个声音也就不要出了
 - 可以音频解析，做特效
 
-MPlayer实现对AudioContext的封装，可以很方便的使用
+wmplayer实现对AudioContext的封装，可以很方便的使用
 
 ## 使用usage
 
-引入mplayer
+引入wmplayer
 
 ```
-npm i @hans000/media-player -S
+npm i wmplayer -S
 
-https://cdn.jsdelivr.net/npm/@hans000/media-player@1.3.0/dist/index.js
 ```
 
 ## 示例demo
@@ -23,14 +22,11 @@ https://cdn.jsdelivr.net/npm/@hans000/media-player@1.3.0/dist/index.js
 npm安装
 
 ```js
-npm i -S @hans000/media-player
-import MPlayer from '@hans000/media-player'
+npm i -S wmplayer
+import MPlayer from 'wmplayer'
 ```
 
-CDN引入
-
 ```
-<script src="https://cdn.jsdelivr.net/npm/@hans000/media-player@1.3.0/dist/mplayer.js"></script>
 
 // 挂载MPlayer构造函数
 ```
@@ -38,14 +34,14 @@ CDN引入
 初始化
 
 ```js
-new MPlayer('./1.mp3')
-new MPlayer(['./1.mp3', './2.mp3'], {
+wmplayer.create('./1.mp3')
+wmplayer.create(['./1.mp3', './2.mp3'], {
   baseUrl: '/assets',
 })
 ```
 
 ```
-new MPlayer(resource, options)
+wmplayer.create(resource, options)
 ```
 
 `resouce`：可以传出一个url string、一个ArrayBuffer或者值为url string的数组
@@ -58,14 +54,16 @@ new MPlayer(resource, options)
 - fftSize：number类型，音频分析，默认`1024`
 - cacheCount：number类型，缓存数量，默认5
 - baseUrl：string类型，会拼接到url前，默认""
+- autoplay: 是否自动播放
+- playmode: 播放模式 0 -> PlayMode.order | 1 -> PlayMode.rand | 2 -> PlayMode.single
 
 ```js
-let player = new MPlayer(resource, {
+let player = wmplayer.create(resource, {
   loop: false,
   volume: 0.6,
   fftSize: 512,
   cacheCount: 10,
-  playMode: 'rand',
+  playMode: wmplayer.PlayMode.rand,
 })
 player.onload = function() {
 	this.play()
@@ -76,7 +74,7 @@ player.onload = function() {
 
 ```js
 // 初始化时设置
-let player = new MPlayer('./1.mp3')
+let player = new wmplayer.create('./1.mp3')
 
 // 添加事件监听方法，会覆盖之前用该方式绑定的监听方法
 player.onload = function () { ... }
