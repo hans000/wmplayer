@@ -28,7 +28,6 @@ import MPlayer from 'wmplayer'
 
 ```
 
-// 挂载MPlayer构造函数
 ```
 
 初始化
