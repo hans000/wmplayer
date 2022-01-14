@@ -1,13 +1,12 @@
 {
   "name": "wmplayer",
-  "version": "1.0.0-alpha",
+  "version": "1.0.1-alpha",
   "description": "wmplayer实现对AudioContext的封装，可以快速的开发音乐播放器，可以对音频分析，做音频可视化",
-  "main": "dist/mplayer.js",
+  "main": "dist/umd/index.min.js",
+  "module": "dist/es/index.js",
   "types": "./src/index.d.ts",
-  
   "scripts": {
-    "build": "webpack",
-    "start:dev": "webpack-dev-server"
+    "build": "rollup -c"
   },
   "files": [
     "package.json",
@@ -32,8 +31,9 @@
   "homepage": "https://github.com/hans000/wmplayer#readme",
   "devDependencies": {
     "ts-loader": "^7.0.5",
-    "typescript": "^3.9.5",
-    "webpack": "^5.38.1",
-    "webpack-cli": "^4.7.0"
+    "rollup": "^2.58.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "typescript": "^3.9.5"
   }
 }

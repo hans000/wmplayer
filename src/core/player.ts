@@ -32,7 +32,7 @@ export function createPlayer(resource: string | string[], options: IOptions = {}
     return new Player(resource, options)
 }
 
-class Player extends EventBus {
+export class Player extends EventBus {
     //#region 变量
     private options: IOptions;
     private playingState: PlayingState;

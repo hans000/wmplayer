@@ -23,7 +23,7 @@ npm安装
 
 ```js
 npm i -S wmplayer
-import MPlayer from 'wmplayer'
+import wmplayer from 'wmplayer'
 ```
 
 ```
@@ -73,7 +73,7 @@ player.onload = function() {
 
 ```js
 // 初始化时设置
-let player = new wmplayer.create('./1.mp3')
+let player = wmplayer.create('./1.mp3')
 
 // 添加事件监听方法，会覆盖之前用该方式绑定的监听方法
 player.onload = function () { ... }
@@ -121,9 +121,7 @@ player.off('load')
 事件 events
 
 - onload：音频解析完成时触发
-
 - onended：音频播放完触发
-
 - oncatch：捕捉异常
 ## License
 
